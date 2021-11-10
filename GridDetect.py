@@ -65,14 +65,15 @@ def detect_grid(capture):
 
 
         frame = cv2.resize(frame, (960, 540))
-        cv2.imshow("contours", frame)
-
         angle = np.median(newContourRadians)
-        rotated = imutils.rotate(frame, -angle)
 
-        cropped = rotated[centralPoint[1] // 2 - squareRadius // 2:centralPoint[1] // 2 + squareRadius // 2,
-                  centralPoint[0] // 2 - squareRadius // 2:centralPoint[0] // 2 + squareRadius // 2]
-        cv2.imshow("cropped", cropped)
+        if AT_showEverything:
+            cv2.imshow("contours", frame)
+            rotated = imutils.rotate(frame, -angle)
+            cropped = rotated[centralPoint[1] // 2 - squareRadius // 2:centralPoint[1] // 2 + squareRadius // 2,
+                      centralPoint[0] // 2 - squareRadius // 2:centralPoint[0] // 2 + squareRadius // 2]
+
+            cv2.imshow("cropped", cropped)
         cv2.waitKey(1)
 
     cv2.destroyAllWindows()
