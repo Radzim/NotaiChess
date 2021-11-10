@@ -9,4 +9,4 @@ AT_startTime = 5  # minutes
 AT_incrementTime = 5  # seconds
 AT_showAnything = True
 AT_showEverything = True
-AT_changeForQuit = 0.8
+AT_changeForQuit = 0.65

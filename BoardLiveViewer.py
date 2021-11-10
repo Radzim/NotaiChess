@@ -73,10 +73,10 @@ def play(url):
             cv2.imshow('Original', smallFrameWithBuffer)
             cv2.imshow('Gridboard', gridFrame)
             cv2.imshow('SquaresAvg', squaresImage)
-            cv2.imshow('Digital Board', pngBoard)
-        if AT_showAnything:
             cv2.imshow('Buffer2', diffThreshWithBuffer)
+        if AT_showAnything:
             printout = create_printout(liveTimeLeft, pgn, winner)
+            cv2.imshow('Digital Board', pngBoard)
             cv2.imshow('Live Game Analysis', printout)
 
         if np.average(diffThreshWithBuffer) > AT_changeForQuit*255:
