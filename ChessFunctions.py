@@ -1,10 +1,8 @@
 import chess.pgn
 import chess.svg
-import cv2
+import cv2.cv2 as cv2
 import numpy as np
-from reportlab.graphics import renderPM
-from svglib.svglib import svg2rlg
-
+from PIL import Image, ImageDraw, ImageFont
 from ChessData import *
 from alanTuning import *
 
@@ -47,13 +45,28 @@ def two_squares(square_centres_list):
 
 
 def board_to_png(board_chess):
-    svg_data = chess.svg.board(board=board_chess, size=1800)
-    f = open("board.svg", "w")
-    f.write(svg_data)
-    f.close()
-    drawing = svg2rlg("board.svg")
-    renderPM.drawToFile(drawing, "board.png", fmt="PNG")
-    return cv2.resize(cv2.imread("board.png"), (900, 900))
+    img = np.zeros((900, 900, 3), np.uint8)
+    img = 255-img
+    board_string = str(board_chess)
+    board_string = board_string.replace('K', '♔')
+    board_string = board_string.replace('Q', '♕')
+    board_string = board_string.replace('R', '♖')
+    board_string = board_string.replace('B', '♗')
+    board_string = board_string.replace('N', '♘')
+    board_string = board_string.replace('P', '♙')
+    board_string = board_string.replace('k', '♚')
+    board_string = board_string.replace('q', '♛')
+    board_string = board_string.replace('r', '♜')
+    board_string = board_string.replace('b', '♝')
+    board_string = board_string.replace('n', '♞')
+    board_string = board_string.replace('p', '♟')
+    board_string = board_string.replace('.', ' ')
+    img_pil = Image.fromarray(img)
+    draw = ImageDraw.Draw(img_pil)
+    font = ImageFont.truetype("DejaVuSansMono.ttf", 50)
+    draw.text((50, 80), str(board_string), fill=(0, 0, 0, 255), font=font)
+    img = np.array(img_pil)
+    return img
 
 
 def analyse_position(chessboard):
