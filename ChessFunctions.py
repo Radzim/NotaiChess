@@ -1,3 +1,4 @@
+import datetime
 import chess.pgn
 import chess.svg
 import cv2.cv2 as cv2
@@ -20,6 +21,7 @@ def calculate_all_area_averages(flash_matrix, fragment_dimensions):
     return np.divide(center_rectangle, f_y * f_x)
 
 
+# TODO: REWORK THIS AND SHOW SQUARES
 def square_centres(image):
     area_averages = calculate_all_area_averages(image, (image.shape[0] // 16, image.shape[0] // 16))
     square_centres_list = []
@@ -30,12 +32,12 @@ def square_centres(image):
 
 
 def two_squares(square_centres_list):
-    highest_two_pred = np.where(square_centres_list > np.partition(square_centres_list, -3)[-3], 1, 0)
-    highest_three_pred = np.where(square_centres_list > np.partition(square_centres_list, -4)[-4], 1, 0)
-    highest_four_pred = np.where(square_centres_list > np.partition(square_centres_list, -5)[-5], 1, 0)
-    highest_two = frozenset([i for i, val in enumerate(highest_two_pred) if val == 1])
-    highest_three = frozenset([i for i, val in enumerate(highest_three_pred) if val == 1])
-    highest_four = frozenset([i for i, val in enumerate(highest_four_pred) if val == 1])
+    highest_two_predicate = np.where(square_centres_list > np.partition(square_centres_list, -3)[-3], 1, 0)
+    highest_three_predicate = np.where(square_centres_list > np.partition(square_centres_list, -4)[-4], 1, 0)
+    highest_four_predicate = np.where(square_centres_list > np.partition(square_centres_list, -5)[-5], 1, 0)
+    highest_two = frozenset([i for i, val in enumerate(highest_two_predicate) if val == 1])
+    highest_three = frozenset([i for i, val in enumerate(highest_three_predicate) if val == 1])
+    highest_four = frozenset([i for i, val in enumerate(highest_four_predicate) if val == 1])
     if highest_four in castles.keys():
         return list(castles[highest_four])
     if highest_three in enpassants.keys():
@@ -44,9 +46,10 @@ def two_squares(square_centres_list):
         return list(highest_two)
 
 
+# TODO: MAKE THIS LOOK LIKE CHESS
 def board_to_png(board_chess):
     img = np.zeros((900, 900, 3), np.uint8)
-    img = 255-img
+    img = 255 - img
     board_string = str(board_chess)
     board_string = board_string.replace('K', '♔')
     board_string = board_string.replace('Q', '♕')
@@ -69,6 +72,7 @@ def board_to_png(board_chess):
     return img
 
 
+# TODO: DO SOME MORE THAN STRING, PGN WITH THIS DATA
 def analyse_position(chessboard):
     if chessboard.is_stalemate():
         return 'DRAW BY STALEMATE'
@@ -86,10 +90,13 @@ def analyse_position(chessboard):
     return ''
 
 
+# TODO: MAKE ONE PRINTOUT THAT LOOKS LIKE AN APP
 def create_printout(live_time_left, pgn_text, win_text):
     img = np.zeros((900, 1000, 3), np.uint8)
     font = cv2.FONT_HERSHEY_SIMPLEX
-    text_content = 'BLACK ' + str(int(live_time_left[chess.BLACK]) // 60) + ':' + ('00' + str(int(live_time_left[chess.BLACK]) % 60))[-2:] + '    ' + str(int(live_time_left[chess.WHITE]) // 60) + ':' + ('00' + str(int(live_time_left[chess.WHITE]) % 60))[-2:] + ' WHITE'
+    time_black = str(datetime.timedelta(live_time_left[chess.BLACK]))
+    time_white = str(datetime.timedelta(live_time_left[chess.WHITE]))
+    text_content = 'BLACK ' + time_black + '    ' + time_white + ' WHITE'
     bottom_left_corner_of_text = (10, 50)
     font_scale = 2
     font_color = (255, 255, 255)
@@ -102,6 +109,8 @@ def create_printout(live_time_left, pgn_text, win_text):
 
 
 def new_square_owner(board):
+    # TODO: TRY TO DO THIS FROM str(board)
+    # TODO: too long lines
     one_to_one_fen = board.fen().replace('/', '').replace('1', '_' * 1).replace('2', '_' * 2).replace('3',
                                                                                                       '_' * 3).replace(
         '4', '_' * 4).replace('5', '_' * 5).replace('6', '_' * 6).replace('7', '_' * 7).replace('8', '_' * 8)
@@ -120,7 +129,7 @@ def time_control(start, increment=0):
     return {chess.WHITE: start * 60, chess.BLACK: start * 60}, increment
 
 
-# USE BOARD.STACK!
+# TODO: USE BOARD.STACK
 def update_pgn(pgn_in, board, uci_move):
     move_count = len(board.move_stack) // 2 + 1
     pgn = pgn_in
@@ -154,7 +163,8 @@ def uci_move_promotion_check(uci_move, legal_moves):
 
 def detect_stable_move(stable_count, square_centres_list, diff_thresh_wb, diff_thresh, two_squares_list, last_squares):
     condition_a = max(square_centres_list) > AT_minimumChangeForMove * 255
-    condition_b = (np.sum(diff_thresh_wb) - np.sum(diff_thresh)) / (np.size(diff_thresh_wb)-np.size(diff_thresh)) < AT_bufferProtection * 255
+    condition_b = (np.sum(diff_thresh_wb) - np.sum(diff_thresh)) / (
+                np.size(diff_thresh_wb) - np.size(diff_thresh)) < AT_bufferProtection * 255
     condition_c = two_squares_list == last_squares
     condition_d = len(two_squares_list) == 2
     if condition_a and condition_b and condition_c and condition_d:
@@ -171,6 +181,7 @@ def update_live_time(time_left, last_move_time, turn, time_time):
     return time_left_copy
 
 
+# TODO: USE SOME SORT OF CODES TO PASS TO PGN
 def check_timeout(live_time_left, turn):
     if live_time_left[turn] <= 0:
         if turn == chess.WHITE:

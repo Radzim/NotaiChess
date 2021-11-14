@@ -4,6 +4,7 @@ from ChessFunctions import *
 from GridDetect import *
 
 
+# TODO: UPPERCASE VARIABLES
 def play(url):
     return_code = ''
     return_value = ''
@@ -21,6 +22,7 @@ def play(url):
         return_code = grid_detector_values
         return return_code, return_value
     grid_central_point, grid_radius, grid_angle = grid_detector_values
+    # TODO: too long lines
     print('Grid detected.', 'centre:', tuple(grid_central_point), 'size:', (2*grid_radius, 2*grid_radius) , 'a:', grid_angle)
     # INITIALISING
     lastMoveTime = time.time()
@@ -49,6 +51,7 @@ def play(url):
             referenceFrameWithBuffer = grayscaleFrameWithBuffer.astype(float)
         # FIND FRAME DIFFERENCES
         diffFrameWithBuffer = grayscaleFrameWithBuffer.astype(float) - referenceFrameWithBuffer
+        # TODO: too long lines
         diffThreshWithBuffer = np.array(np.where(np.absolute(diffFrameWithBuffer) > AT_changeThreshold * 255, 255, 0), dtype=np.uint8)
         diffThreshWithBuffer = cv2.medianBlur(diffThreshWithBuffer, 5)
         bufferCrop = np.array([shape[0] // 18, shape[1] * 17 // 18], dtype=int)
@@ -60,6 +63,7 @@ def play(url):
         squaresImage = cv2.resize(numpySquares, dsize=(540, 540), interpolation=cv2.INTER_NEAREST)
         twoSquares = two_squares(squareCentres)
         # DETECT STABLE DIFFERENCES THAT MAY BE MOVES
+        # TODO: too long lines
         stabilityCounter = detect_stable_move(stabilityCounter, squareCentres, diffThreshWithBuffer, diffThresh, twoSquares, lastSquares)
         # IF A STABLE CHANGE IS DETECTED
         if stabilityCounter >= AT_stableFramesForMove:
@@ -81,18 +85,20 @@ def play(url):
             # REFRESH REFERENCE FRAME TO NEW STABLE IMAGE
             stabilityCounter = 0
             referenceFrameWithBuffer = grayscaleFrameWithBuffer.astype(float)
-
+        # TODO (maybe): redo lastSquares
         lastSquares = twoSquares
         liveTimeLeft = update_live_time(timeLeft, lastMoveTime, board.turn, time.time())
         if check_timeout(liveTimeLeft, board.turn) != '':
             return_code = check_timeout(liveTimeLeft, board.turn)
             break
         if AT_showEverything:
+            # TODO: ONE SINGLE DISPLAY
             cv2.imshow('Original', smallFrameWithBuffer)
-            cv2.imshow('Gridboard', gridFrame)
+            cv2.imshow('Grid Board', gridFrame)
             cv2.imshow('SquaresAvg', squaresImage)
             cv2.imshow('Buffer', diffThreshWithBuffer)
         if AT_showAnything:
+            # TODO: ONE SINGLE DISPLAY
             cv2.imshow('Original', smallFrameWithBuffer)
             printout = create_printout(liveTimeLeft, pgn, return_code)
             cv2.imshow('Digital Board', pngBoard)
