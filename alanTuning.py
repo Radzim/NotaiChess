@@ -11,3 +11,4 @@ AT_showEverything = True
 AT_changeForQuit = 0.65
 # TODO: COLOR CURVE FROM STRING AT_colorCurve = lambda pixel: pixel[:2]
 # TODO: COMMON DISPLAY OPTIONS
+# TODO: PRINTOUT OPTIONS
